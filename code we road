@@ -1,0 +1,374 @@
+export default function IndiaTripHub() {
+  const itinerary = [
+    {
+      day: 'Giorno 1',
+      city: 'Delhi',
+      description:
+        'Arrivo dei partecipanti, check-in in hotel, cena di benvenuto e primo impatto con il caos indiano.',
+    },
+    {
+      day: 'Giorno 2',
+      city: 'Old Delhi',
+      description:
+        'Rickshaw tour, street food, Jama Masjid e Chandni Chowk.',
+    },
+    {
+      day: 'Giorno 3',
+      city: 'Jaipur',
+      description:
+        'Transfer privato, Amber Fort, City Palace e rooftop sunset.',
+    },
+  ]
+
+  const participants = [
+    {
+      name: 'Giulia',
+      city: 'Milano',
+      hobby: 'Surf & Yoga',
+    },
+    {
+      name: 'Luca',
+      city: 'Roma',
+      hobby: 'Photography',
+    },
+    {
+      name: 'Martina',
+      city: 'Torino',
+      hobby: 'Trekking',
+    },
+  ]
+
+  const checklist = [
+    'Passaporto',
+    'Visto India',
+    'Powerbank',
+    'Adattatore universale',
+    'Scarpe comode',
+    'Medicine base',
+  ]
+
+  const polls = [
+    {
+      question: 'Cena finale a Jaipur?',
+      options: ['Rooftop', 'Street Food Tour', 'Ristorante tipico'],
+    },
+  ]
+
+  return (
+    <div className="min-h-screen bg-[#F5F5F5] text-[#111111] font-sans">
+      {/* NAVBAR */}
+      <header className="sticky top-0 z-50 border-b border-[#2A2A2A] bg-[#111111] text-white">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
+          <div className="flex items-center gap-3">
+            <div className="h-3 w-3 rounded-full bg-[#FF5A4F]" />
+            <h1 className="text-3xl font-black tracking-wide">WE/ROAD</h1>
+          </div>
+
+          <nav className="hidden gap-8 text-sm font-semibold uppercase tracking-wide lg:flex">
+            <a href="#info" className="hover:text-[#FF5A4F]">Info</a>
+            <a href="#itinerario" className="hover:text-[#FF5A4F]">Itinerario</a>
+            <a href="#spostamenti" className="hover:text-[#FF5A4F]">Spostamenti</a>
+            <a href="#hotel" className="hover:text-[#FF5A4F]">Hotel</a>
+            <a href="#partecipanti" className="hover:text-[#FF5A4F]">Partecipanti</a>
+            <a href="#checklist" className="hover:text-[#FF5A4F]">Checklist</a>
+            <a href="#sondaggi" className="hover:text-[#FF5A4F]">Sondaggi</a>
+            <a href="#foto" className="hover:text-[#FF5A4F]">Foto</a>
+          </nav>
+        </div>
+      </header>
+
+      {/* HERO */}
+      <section id="info" className="mx-auto max-w-7xl px-6 py-10 lg:py-14">
+        <div className="relative overflow-hidden rounded-[36px] bg-[#111111] p-10 text-white shadow-2xl lg:p-16">
+          <div className="absolute right-[-120px] top-[-60px] h-[320px] w-[320px] rounded-full bg-[#FF5A4F]/20" />
+          <div className="absolute bottom-[-100px] left-[40%] h-[220px] w-[220px] rounded-full bg-[#FF5A4F]/10" />
+
+          <div className="relative z-10 max-w-3xl">
+            <p className="mb-5 text-sm font-bold uppercase tracking-[0.3em] text-[#FFB0AA]">
+              Viaggio WeRoad
+            </p>
+
+            <h2 className="font-serif text-6xl font-bold leading-tight lg:text-7xl">
+              India Experience
+            </h2>
+
+            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-gray-300">
+              Delhi • Jaipur • Agra • Varanasi
+              <br />
+              Un viaggio intenso tra caos, spiritualità, street food,
+              templi, mercati e colori.
+            </p>
+
+            <div className="mt-12 grid grid-cols-2 gap-8 lg:grid-cols-4">
+              <div>
+                <p className="text-sm uppercase text-gray-400">Destinazione</p>
+                <p className="mt-2 text-xl font-bold">India</p>
+              </div>
+
+              <div>
+                <p className="text-sm uppercase text-gray-400">Date</p>
+                <p className="mt-2 text-xl font-bold">Agosto 2026</p>
+              </div>
+
+              <div>
+                <p className="text-sm uppercase text-gray-400">Partecipanti</p>
+                <p className="mt-2 text-xl font-bold">12 Pax</p>
+              </div>
+
+              <div>
+                <p className="text-sm uppercase text-gray-400">Coordinator</p>
+                <p className="mt-2 text-xl font-bold">Simone</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* INFO CARDS */}
+      <section className="mx-auto grid max-w-7xl gap-6 px-6 pb-12 lg:grid-cols-4">
+        {[
+          {
+            title: 'Documenti',
+            text: 'Passaporto + Visto India obbligatori.',
+          },
+          {
+            title: 'Valuta',
+            text: 'Rupia Indiana • Revolut consigliata.',
+          },
+          {
+            title: 'eSIM',
+            text: 'Airalo e Holafly funzionano bene.',
+          },
+          {
+            title: 'Meteo',
+            text: 'Caldo umido • portare vestiti leggeri.',
+          },
+        ].map((card) => (
+          <div
+            key={card.title}
+            className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-xl"
+          >
+            <h3 className="text-xl font-bold">{card.title}</h3>
+            <p className="mt-3 leading-relaxed text-[#7A7A7A]">
+              {card.text}
+            </p>
+          </div>
+        ))}
+      </section>
+
+      {/* ITINERARY */}
+      <section id="itinerario" className="mx-auto max-w-7xl px-6 py-12">
+        <div className="mb-10 flex items-center justify-between">
+          <h2 className="font-serif text-5xl font-bold">Itinerario</h2>
+
+          <button className="rounded-full bg-[#FF5A4F] px-6 py-3 text-sm font-bold uppercase tracking-wide text-white transition hover:scale-105">
+            Modifica Itinerario
+          </button>
+        </div>
+
+        <div className="space-y-8 border-l-2 border-gray-300 pl-8">
+          {itinerary.map((item, index) => (
+            <div key={index} className="relative rounded-3xl bg-white p-8 shadow-sm">
+              <div className="absolute -left-[42px] top-10 h-5 w-5 rounded-full bg-[#FF5A4F]" />
+
+              <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+                <div>
+                  <p className="text-sm font-bold uppercase tracking-widest text-[#FF5A4F]">
+                    {item.day}
+                  </p>
+
+                  <h3 className="mt-2 text-3xl font-bold">{item.city}</h3>
+                </div>
+
+                <span className="rounded-full bg-[#111111] px-4 py-2 text-sm font-semibold text-white w-fit">
+                  India Route
+                </span>
+              </div>
+
+              <p className="mt-5 text-lg leading-relaxed text-[#666666]">
+                {item.description}
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* TRANSPORT */}
+      <section id="spostamenti" className="mx-auto max-w-7xl px-6 py-12">
+        <h2 className="font-serif text-5xl font-bold">Spostamenti</h2>
+
+        <div className="mt-10 grid gap-6 lg:grid-cols-3">
+          {[
+            {
+              type: '✈️ Flight',
+              route: 'Delhi → Varanasi',
+              time: '06:45 — 08:10',
+            },
+            {
+              type: '🚆 Train',
+              route: 'Agra → Jaipur',
+              time: '4h 20m',
+            },
+            {
+              type: '🚐 Van',
+              route: 'Jaipur Local Transfer',
+              time: 'Private transport',
+            },
+          ].map((trip, index) => (
+            <div
+              key={index}
+              className="rounded-3xl bg-[#111111] p-8 text-white"
+            >
+              <p className="text-sm uppercase tracking-widest text-[#FFB0AA]">
+                {trip.type}
+              </p>
+
+              <h3 className="mt-4 text-2xl font-bold">{trip.route}</h3>
+
+              <p className="mt-4 text-gray-300">{trip.time}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* HOTEL */}
+      <section id="hotel" className="mx-auto max-w-7xl px-6 py-12">
+        <h2 className="font-serif text-5xl font-bold">Hotel & Stay</h2>
+
+        <div className="mt-10 grid gap-6 lg:grid-cols-3">
+          {[
+            'Boutique Haveli Hotel',
+            'Pink City Heritage Stay',
+            'Ganges Riverside Hotel',
+          ].map((hotel, index) => (
+            <div
+              key={index}
+              className="overflow-hidden rounded-3xl bg-white shadow-sm"
+            >
+              <div className="h-56 bg-gradient-to-br from-[#111111] to-[#FF5A4F]" />
+
+              <div className="p-6">
+                <h3 className="text-2xl font-bold">{hotel}</h3>
+
+                <p className="mt-3 text-[#7A7A7A]">
+                  Check-in 14:00 • WiFi • Breakfast Included
+                </p>
+
+                <button className="mt-6 rounded-full border border-[#111111] px-5 py-2 text-sm font-semibold transition hover:bg-[#111111] hover:text-white">
+                  View Details
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* PARTICIPANTS */}
+      <section id="partecipanti" className="mx-auto max-w-7xl px-6 py-12">
+        <h2 className="font-serif text-5xl font-bold">Partecipanti</h2>
+
+        <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {participants.map((person, index) => (
+            <div
+              key={index}
+              className="rounded-3xl border border-gray-200 bg-white p-8 shadow-sm"
+            >
+              <div className="flex items-center gap-4">
+                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#111111] text-xl font-bold text-white">
+                  {person.name.charAt(0)}
+                </div>
+
+                <div>
+                  <h3 className="text-2xl font-bold">{person.name}</h3>
+                  <p className="text-[#7A7A7A]">{person.city}</p>
+                </div>
+              </div>
+
+              <p className="mt-6 text-[#666666]">
+                Hobby: {person.hobby}
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* CHECKLIST */}
+      <section id="checklist" className="mx-auto max-w-7xl px-6 py-12">
+        <h2 className="font-serif text-5xl font-bold">Checklist</h2>
+
+        <div className="mt-10 rounded-[32px] bg-white p-8 shadow-sm">
+          <div className="grid gap-5 lg:grid-cols-2">
+            {checklist.map((item, index) => (
+              <label
+                key={index}
+                className="flex items-center gap-4 rounded-2xl border border-gray-200 p-5 transition hover:border-[#FF5A4F]"
+              >
+                <input type="checkbox" className="h-5 w-5" />
+                <span className="text-lg">{item}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* POLLS */}
+      <section id="sondaggi" className="mx-auto max-w-7xl px-6 py-12">
+        <h2 className="font-serif text-5xl font-bold">Sondaggi</h2>
+
+        <div className="mt-10 grid gap-6 lg:grid-cols-2">
+          {polls.map((poll, index) => (
+            <div
+              key={index}
+              className="rounded-[32px] bg-[#111111] p-8 text-white"
+            >
+              <h3 className="text-3xl font-bold">{poll.question}</h3>
+
+              <div className="mt-8 space-y-4">
+                {poll.options.map((option, i) => (
+                  <button
+                    key={i}
+                    className="w-full rounded-2xl border border-white/20 bg-white/5 px-5 py-4 text-left transition hover:border-[#FF5A4F] hover:bg-[#FF5A4F]"
+                  >
+                    {option}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* GALLERY */}
+      <section id="foto" className="mx-auto max-w-7xl px-6 py-12 pb-24">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <h2 className="font-serif text-5xl font-bold">Foto del Viaggio</h2>
+
+          <button className="rounded-full bg-[#FF5A4F] px-6 py-3 text-sm font-bold uppercase tracking-wide text-white transition hover:scale-105">
+            Upload Foto
+          </button>
+        </div>
+
+        <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {[1, 2, 3, 4, 5, 6].map((img) => (
+            <div
+              key={img}
+              className="group h-72 overflow-hidden rounded-[28px] bg-gradient-to-br from-[#111111] to-[#FF5A4F]"
+            >
+              <div className="flex h-full items-end p-6 opacity-0 transition group-hover:opacity-100">
+                <div>
+                  <p className="text-sm uppercase tracking-widest text-[#FFB0AA]">
+                    India Memories
+                  </p>
+
+                  <p className="mt-2 text-xl font-bold text-white">
+                    Shared by Pax
+                  </p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+    </div>
+  )
+}
