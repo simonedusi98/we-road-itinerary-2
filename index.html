@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>India Experience — WeRoad</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'DM Sans', sans-serif; background: #F5F5F5; color: #111111; }
+    .font-serif { font-family: 'Playfair Display', serif; }
+    .sticky { position: sticky; }
+    .top-0 { top: 0; }
+    .z-50 { z-index: 50; }
+    .min-h-screen { min-height: 100vh; }
+    .overflow-hidden { overflow: hidden; }
+    .relative { position: relative; }
+    .absolute { position: absolute; }
+    .hidden { display: none; }
+    @media (min-width: 1024px) { .lg-flex { display: flex !important; } .lg-grid-cols-4 { grid-template-columns: repeat(4,1fr) !important; } .lg-grid-cols-3 { grid-template-columns: repeat(3,1fr) !important; } .lg-grid-cols-2 { grid-template-columns: repeat(2,1fr) !important; } .lg-flex-row { flex-direction: row !important; } .lg-items-center { align-items: center !important; } .lg-justify-between { justify-content: space-between !important; } .lg-py-14 { padding-top: 3.5rem !important; padding-bottom: 3.5rem !important; } .lg-p-16 { padding: 4rem !important; } .lg-text-7xl { font-size: 4.5rem !important; line-height: 1.1 !important; } .lg-pb-0 { padding-bottom: 0 !important; } }
+    @media (min-width: 640px) { .sm-grid-cols-2 { grid-template-columns: repeat(2,1fr) !important; } }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState } = React;
+
+    const itinerary = [
+      { day: 'Giorno 1', city: 'Delhi', description: 'Arrivo dei partecipanti, check-in in hotel, cena di benvenuto e primo impatto con il caos indiano.' },
+      { day: 'Giorno 2', city: 'Old Delhi', description: 'Rickshaw tour, street food, Jama Masjid e Chandni Chowk.' },
+      { day: 'Giorno 3', city: 'Jaipur', description: 'Transfer privato, Amber Fort, City Palace e rooftop sunset.' },
+    ];
+
+    const participants = [
+      { name: 'Giulia', city: 'Milano', hobby: 'Surf & Yoga' },
+      { name: 'Luca', city: 'Roma', hobby: 'Photography' },
+      { name: 'Martina', city: 'Torino', hobby: 'Trekking' },
+    ];
+
+    const checklist = ['Passaporto', 'Visto India', 'Powerbank', 'Adattatore universale', 'Scarpe comode', 'Medicine base'];
+
+    const polls = [{ question: 'Cena finale a Jaipur?', options: ['Rooftop', 'Street Food Tour', 'Ristorante tipico'] }];
+
+    function App() {
+      const [checked, setChecked] = useState({});
+      const [voted, setVoted] = useState({});
+
+      const toggleCheck = (i) => setChecked(p => ({ ...p, [i]: !p[i] }));
+      const vote = (pi, oi) => setVoted(p => ({ ...p, [pi]: oi }));
+
+      return (
+        <div style={{ minHeight: '100vh', background: '#F5F5F5', color: '#111111', fontFamily: "'DM Sans', sans-serif" }}>
+
+          {/* NAVBAR */}
+          <header style={{ position: 'sticky', top: 0, zIndex: 50, borderBottom: '1px solid #2A2A2A', background: '#111111', color: 'white' }}>
+            <div style={{ maxWidth: 1280, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 24px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <div style={{ height: 12, width: 12, borderRadius: '50%', background: '#FF5A4F' }} />
+                <h1 style={{ fontSize: 28, fontWeight: 900, letterSpacing: 2 }}>WE/ROAD</h1>
+              </div>
+              <nav style={{ display: 'flex', gap: 28, fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1 }}>
+                {['Info','Itinerario','Spostamenti','Hotel','Partecipanti','Checklist','Sondaggi','Foto'].map(s => (
+                  <a key={s} href={`#${s.toLowerCase()}`} style={{ color: 'white', textDecoration: 'none' }}
+                    onMouseEnter={e => e.target.style.color='#FF5A4F'}
+                    onMouseLeave={e => e.target.style.color='white'}>{s}</a>
+                ))}
+              </nav>
+            </div>
+          </header>
+
+          {/* HERO */}
+          <section id="info" style={{ maxWidth: 1280, margin: '0 auto', padding: '40px 24px' }}>
+            <div style={{ position: 'relative', overflow: 'hidden', borderRadius: 36, background: '#111111', padding: '64px', color: 'white', boxShadow: '0 25px 60px rgba(0,0,0,0.3)' }}>
+              <div style={{ position: 'absolute', right: -120, top: -60, height: 320, width: 320, borderRadius: '50%', background: 'rgba(255,90,79,0.2)' }} />
+              <div style={{ position: 'absolute', bottom: -100, left: '40%', height: 220, width: 220, borderRadius: '50%', background: 'rgba(255,90,79,0.1)' }} />
+              <div style={{ position: 'relative', zIndex: 1, maxWidth: 700 }}>
+                <p style={{ marginBottom: 20, fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.3em', color: '#FFB0AA' }}>Viaggio WeRoad</p>
+                <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 72, fontWeight: 900, lineHeight: 1.05 }}>India Experience</h2>
+                <p style={{ marginTop: 24, maxWidth: 600, fontSize: 18, lineHeight: 1.7, color: '#ccc' }}>
+                  Delhi • Jaipur • Agra • Varanasi<br />
+                  Un viaggio intenso tra caos, spiritualità, street food, templi, mercati e colori.
+                </p>
+                <div style={{ marginTop: 48, display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 32 }}>
+                  {[['Destinazione','India'],['Date','Agosto 2026'],['Partecipanti','12 Pax'],['Coordinator','Simone']].map(([label,val]) => (
+                    <div key={label}>
+                      <p style={{ fontSize: 12, textTransform: 'uppercase', color: '#999' }}>{label}</p>
+                      <p style={{ marginTop: 8, fontSize: 20, fontWeight: 700 }}>{val}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* INFO CARDS */}
+          <section style={{ maxWidth: 1280, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 24, padding: '0 24px 48px' }}>
+            {[
+              { title: 'Documenti', text: 'Passaporto + Visto India obbligatori.' },
+              { title: 'Valuta', text: 'Rupia Indiana • Revolut consigliata.' },
+              { title: 'eSIM', text: 'Airalo e Holafly funzionano bene.' },
+              { title: 'Meteo', text: 'Caldo umido • portare vestiti leggeri.' },
+            ].map(card => (
+              <div key={card.title} style={{ borderRadius: 24, border: '1px solid #eee', background: 'white', padding: 24, boxShadow: '0 2px 8px rgba(0,0,0,0.05)', transition: 'transform 0.2s, box-shadow 0.2s', cursor: 'default' }}
+                onMouseEnter={e => { e.currentTarget.style.transform='translateY(-4px)'; e.currentTarget.style.boxShadow='0 20px 40px rgba(0,0,0,0.12)'; }}
+                onMouseLeave={e => { e.currentTarget.style.transform='translateY(0)'; e.currentTarget.style.boxShadow='0 2px 8px rgba(0,0,0,0.05)'; }}>
+                <h3 style={{ fontSize: 20, fontWeight: 700 }}>{card.title}</h3>
+                <p style={{ marginTop: 12, lineHeight: 1.6, color: '#7A7A7A' }}>{card.text}</p>
+              </div>
+            ))}
+          </section>
+
+          {/* ITINERARY */}
+          <section id="itinerario" style={{ maxWidth: 1280, margin: '0 auto', padding: '48px 24px' }}>
+            <div style={{ marginBottom: 40, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 52, fontWeight: 900 }}>Itinerario</h2>
+              <button style={{ borderRadius: 999, background: '#FF5A4F', padding: '12px 24px', fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1, color: 'white', border: 'none', cursor: 'pointer' }}>Modifica Itinerario</button>
+            </div>
+            <div style={{ borderLeft: '2px solid #ddd', paddingLeft: 32, display: 'flex', flexDirection: 'column', gap: 32 }}>
+              {itinerary.map((item, index) => (
+                <div key={index} style={{ position: 'relative', borderRadius: 24, background: 'white', padding: 32, boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }}>
+                  <div style={{ position: 'absolute', left: -42, top: 40, height: 20, width: 20, borderRadius: '50%', background: '#FF5A4F' }} />
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                    <p style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.2em', color: '#FF5A4F' }}>{item.day}</p>
+                    <h3 style={{ fontSize: 32, fontWeight: 700 }}>{item.city}</h3>
+                  </div>
+                  <p style={{ marginTop: 20, fontSize: 17, lineHeight: 1.7, color: '#666' }}>{item.description}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* TRANSPORT */}
+          <section id="spostamenti" style={{ maxWidth: 1280, margin: '0 auto', padding: '48px 24px' }}>
+            <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 52, fontWeight: 900 }}>Spostamenti</h2>
+            <div style={{ marginTop: 40, display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 24 }}>
+              {[
+                { type: '✈️ Flight', route: 'Delhi → Varanasi', time: '06:45 — 08:10' },
+                { type: '🚆 Train', route: 'Agra → Jaipur', time: '4h 20m' },
+                { type: '🚐 Van', route: 'Jaipur Local Transfer', time: 'Private transport' },
+              ].map((trip, i) => (
+                <div key={i} style={{ borderRadius: 24, background: '#111111', padding: 32, color: 'white' }}>
+                  <p style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.2em', color: '#FFB0AA' }}>{trip.type}</p>
+                  <h3 style={{ marginTop: 16, fontSize: 24, fontWeight: 700 }}>{trip.route}</h3>
+                  <p style={{ marginTop: 16, color: '#aaa' }}>{trip.time}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* HOTEL */}
+          <section id="hotel" style={{ maxWidth: 1280, margin: '0 auto', padding: '48px 24px' }}>
+            <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 52, fontWeight: 900 }}>Hotel & Stay</h2>
+            <div style={{ marginTop: 40, display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 24 }}>
+              {['Boutique Haveli Hotel','Pink City Heritage Stay','Ganges Riverside Hotel'].map((hotel, i) => (
+                <div key={i} style={{ overflow: 'hidden', borderRadius: 24, background: 'white', boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }}>
+                  <div style={{ height: 220, background: 'linear-gradient(135deg, #111111, #FF5A4F)' }} />
+                  <div style={{ padding: 24 }}>
+                    <h3 style={{ fontSize: 22, fontWeight: 700 }}>{hotel}</h3>
+                    <p style={{ marginTop: 12, color: '#7A7A7A' }}>Check-in 14:00 • WiFi • Breakfast Included</p>
+                    <button style={{ marginTop: 24, borderRadius: 999, border: '1px solid #111', padding: '8px 20px', fontSize: 13, fontWeight: 600, background: 'white', cursor: 'pointer', transition: 'all 0.2s' }}
+                      onMouseEnter={e => { e.target.style.background='#111'; e.target.style.color='white'; }}
+                      onMouseLeave={e => { e.target.style.background='white'; e.target.style.color='#111'; }}>
+                      View Details
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* PARTICIPANTS */}
+          <section id="partecipanti" style={{ maxWidth: 1280, margin: '0 auto', padding: '48px 24px' }}>
+            <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 52, fontWeight: 900 }}>Partecipanti</h2>
+            <div style={{ marginTop: 40, display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 24 }}>
+              {participants.map((p, i) => (
+                <div key={i} style={{ borderRadius: 24, border: '1px solid #eee', background: 'white', padding: 32, boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+                    <div style={{ height: 64, width: 64, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%', background: '#111', fontSize: 22, fontWeight: 700, color: 'white' }}>{p.name.charAt(0)}</div>
+                    <div>
+                      <h3 style={{ fontSize: 22, fontWeight: 700 }}>{p.name}</h3>
+                      <p style={{ color: '#7A7A7A' }}>{p.city}</p>
+                    </div>
+                  </div>
+                  <p style={{ marginTop: 24, color: '#666' }}>Hobby: {p.hobby}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* CHECKLIST */}
+          <section id="checklist" style={{ maxWidth: 1280, margin: '0 auto', padding: '48px 24px' }}>
+            <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 52, fontWeight: 900 }}>Checklist</h2>
+            <div style={{ marginTop: 40, borderRadius: 32, background: 'white', padding: 32, boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 20 }}>
+                {checklist.map((item, i) => (
+                  <label key={i} onClick={() => toggleCheck(i)} style={{ display: 'flex', alignItems: 'center', gap: 16, borderRadius: 16, border: `1px solid ${checked[i] ? '#FF5A4F' : '#eee'}`, padding: 20, cursor: 'pointer', transition: 'border 0.2s', background: checked[i] ? '#fff5f4' : 'white' }}>
+                    <div style={{ height: 22, width: 22, borderRadius: 6, border: `2px solid ${checked[i] ? '#FF5A4F' : '#ccc'}`, background: checked[i] ? '#FF5A4F' : 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                      {checked[i] && <span style={{ color: 'white', fontSize: 13, fontWeight: 700 }}>✓</span>}
+                    </div>
+                    <span style={{ fontSize: 17, textDecoration: checked[i] ? 'line-through' : 'none', color: checked[i] ? '#aaa' : '#111' }}>{item}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* POLLS */}
+          <section id="sondaggi" style={{ maxWidth: 1280, margin: '0 auto', padding: '48px 24px' }}>
+            <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 52, fontWeight: 900 }}>Sondaggi</h2>
+            <div style={{ marginTop: 40, display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 24 }}>
+              {polls.map((poll, pi) => (
+                <div key={pi} style={{ borderRadius: 32, background: '#111111', padding: 32, color: 'white' }}>
+                  <h3 style={{ fontSize: 28, fontWeight: 700 }}>{poll.question}</h3>
+                  <div style={{ marginTop: 32, display: 'flex', flexDirection: 'column', gap: 16 }}>
+                    {poll.options.map((option, oi) => (
+                      <button key={oi} onClick={() => vote(pi, oi)} style={{ width: '100%', borderRadius: 16, border: `1px solid ${voted[pi]===oi ? '#FF5A4F' : 'rgba(255,255,255,0.2)'}`, background: voted[pi]===oi ? '#FF5A4F' : 'rgba(255,255,255,0.05)', padding: '16px 20px', textAlign: 'left', color: 'white', fontSize: 16, cursor: 'pointer', transition: 'all 0.2s', fontFamily: "'DM Sans', sans-serif" }}>
+                        {voted[pi]===oi ? '✓ ' : ''}{option}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* GALLERY */}
+          <section id="foto" style={{ maxWidth: 1280, margin: '0 auto', padding: '48px 24px 96px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 40 }}>
+              <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 52, fontWeight: 900 }}>Foto del Viaggio</h2>
+              <button style={{ borderRadius: 999, background: '#FF5A4F', padding: '12px 24px', fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1, color: 'white', border: 'none', cursor: 'pointer' }}>Upload Foto</button>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 24 }}>
+              {[1,2,3,4,5,6].map(img => (
+                <div key={img} style={{ height: 288, overflow: 'hidden', borderRadius: 28, background: 'linear-gradient(135deg, #111111, #FF5A4F)', position: 'relative', cursor: 'pointer' }}
+                  onMouseEnter={e => e.currentTarget.querySelector('.overlay').style.opacity=1}
+                  onMouseLeave={e => e.currentTarget.querySelector('.overlay').style.opacity=0}>
+                  <div className="overlay" style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'flex-end', padding: 24, opacity: 0, transition: 'opacity 0.3s' }}>
+                    <div>
+                      <p style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.2em', color: '#FFB0AA' }}>India Memories</p>
+                      <p style={{ marginTop: 8, fontSize: 20, fontWeight: 700, color: 'white' }}>Shared by Pax</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>
