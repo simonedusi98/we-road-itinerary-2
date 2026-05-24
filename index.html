@@ -63,16 +63,31 @@
     @media (max-width: 900px) { .grid-4,.grid-3 { grid-template-columns: repeat(2,1fr); } }
     @media (max-width: 600px) { .grid-4,.grid-3,.grid-2 { grid-template-columns: 1fr; } .h2 { font-size: 32px; } }
   </style>
-</head>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabas
 <body>
 
 <div id="app"></div>
 
 <script>
+const SUPABASE_URL = 'https://lodcdvhkwezdmmysxmuk.supabase.co';
+
+const SUPABASE_KEY = 'sb_publishable_AYnvUaaIry_hsY0AEYXhLw_mF5_JjFs';
+
+const supabase = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
 // ============================================================
 // DATA STORE — usa localStorage per persistenza
 // ============================================================
-const DEFAULT_DATA = {
+const SUPABASE_URL = 'https://lodcdvhkwezdmmysxmuk.supabase.co';
+
+const SUPABASE_KEY = 'INCOLLA_QUI_LA_TUA_KEY_sb_publishable';
+
+const supabase = window.supabase.createClient(
+SUPABASE_URL,
+SUPABASE_KEY
+);
   tripName: 'India Experience',
   subtitle: 'Delhi • Agra • Jaipur • Pushkar • Jodhpur',
   dates: 'Agosto 2026',
@@ -154,21 +169,31 @@ const DEFAULT_DATA = {
   ],
 };
 
-function loadData() {
-  try {
-    const saved = localStorage.getItem('weroad_data');
-    return saved ? JSON.parse(saved) : JSON.parse(JSON.stringify(DEFAULT_DATA));
-  } catch(e) { return JSON.parse(JSON.stringify(DEFAULT_DATA)); }
+async function loadData() {
+const { data, error } = await supabase
+.from('trip_data')
+.select('content')
+.eq('id', 1)
+.single();
+
+if (error || !data?.content) {
+return JSON.parse(JSON.stringify(DEFAULT_DATA));
 }
 
-function saveData(data) {
-  localStorage.setItem('weroad_data', JSON.stringify(data));
+return data.content;
+}
+
+async function saveData(data) {
+await supabase
+.from('trip_data')
+.update({ content: data })
+.eq('id', 1);
 }
 
 // ============================================================
 // STATE
 // ============================================================
-let data = loadData();
+let data = JSON.parse(JSON.stringify(DEFAULT_DATA));
 let adminOpen = false;
 let adminAuthenticated = localStorage.getItem('weroad_admin') === 'yes';
 let adminTab = 'trip';
@@ -693,7 +718,12 @@ function showToast(msg) {
 // ============================================================
 // INIT
 // ============================================================
+async function init() {
+data = await loadData();
 render();
+}
+
+init();
 </script>
 </body>
 </html>
