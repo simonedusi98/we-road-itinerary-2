@@ -5,13 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>India Experience — WeRoad</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'DM Sans', sans-serif; background: #F5F5F5; color: #111; }
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-thumb { background: #FF5A4F; border-radius: 3px; }
-
-    /* ADMIN PANEL */
     .admin-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 1000; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
     .admin-modal { background: #111; color: white; border-radius: 24px; padding: 48px; max-width: 500px; width: 90%; }
     .admin-panel { position: fixed; top: 0; right: -520px; width: 500px; height: 100vh; background: #111; color: white; z-index: 999; transition: right 0.35s cubic-bezier(.4,0,.2,1); overflow-y: auto; box-shadow: -8px 0 40px rgba(0,0,0,0.4); padding: 32px 28px; }
@@ -31,8 +30,6 @@
     .tab-btn { padding: 8px 16px; border-radius: 8px; border: none; cursor: pointer; font-size: 13px; font-weight: 600; font-family: 'DM Sans', sans-serif; transition: all 0.2s; }
     .tab-btn.active { background: #FF5A4F; color: white; }
     .tab-btn:not(.active) { background: rgba(255,255,255,0.08); color: #aaa; }
-
-    /* SITE */
     .nav-link { color: white; text-decoration: none; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; transition: color 0.2s; }
     .nav-link:hover { color: #FF5A4F; }
     .card { background: white; border-radius: 24px; border: 1px solid #eee; box-shadow: 0 2px 8px rgba(0,0,0,0.05); transition: transform 0.2s, box-shadow 0.2s; }
@@ -60,43 +57,42 @@
     .poll-option.voted { border-color: #FF5A4F; background: #FF5A4F; font-weight: 700; }
     .admin-trigger { position: fixed; bottom: 24px; right: 24px; background: #111; color: white; border: none; border-radius: 999px; padding: 12px 22px; font-size: 13px; font-weight: 700; cursor: pointer; z-index: 998; box-shadow: 0 4px 20px rgba(0,0,0,0.3); font-family: 'DM Sans', sans-serif; display: flex; align-items: center; gap: 8px; transition: all 0.2s; }
     .admin-trigger:hover { background: #FF5A4F; }
+    .loading { position: fixed; inset: 0; background: #111; display: flex; align-items: center; justify-content: center; z-index: 9999; flex-direction: column; gap: 16px; }
+    .loading p { color: white; font-size: 16px; font-weight: 600; }
+    .spinner { width: 40px; height: 40px; border: 3px solid rgba(255,90,79,0.3); border-top-color: #FF5A4F; border-radius: 50%; animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
     @media (max-width: 900px) { .grid-4,.grid-3 { grid-template-columns: repeat(2,1fr); } }
     @media (max-width: 600px) { .grid-4,.grid-3,.grid-2 { grid-template-columns: 1fr; } .h2 { font-size: 32px; } }
   </style>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabas
+</head>
 <body>
-
-<div id="app"></div>
+<div id="app">
+  <div class="loading">
+    <div class="spinner"></div>
+    <p>Caricamento...</p>
+  </div>
+</div>
 
 <script>
+// ============================================================
+// SUPABASE
+// ============================================================
 const SUPABASE_URL = 'https://lodcdvhkwezdmmysxmuk.supabase.co';
-
 const SUPABASE_KEY = 'sb_publishable_AYnvUaaIry_hsY0AEYXhLw_mF5_JjFs';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-const supabase = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
-);
 // ============================================================
-// DATA STORE — usa localStorage per persistenza
+// DEFAULT DATA
 // ============================================================
-const SUPABASE_URL = 'https://lodcdvhkwezdmmysxmuk.supabase.co';
-
-const SUPABASE_KEY = 'INCOLLA_QUI_LA_TUA_KEY_sb_publishable';
-
-const supabase = window.supabase.createClient(
-SUPABASE_URL,
-SUPABASE_KEY
-);
+const DEFAULT_DATA = {
   tripName: 'India Experience',
   subtitle: 'Delhi • Agra • Jaipur • Pushkar • Jodhpur',
   dates: 'Agosto 2026',
-  participants: '12 Pax',
+  paxCount: '12 Pax',
   coordinator: 'Simone',
   dmc: 'Cloud Itineraries DMC',
   dmcContact: 'Anjani Nandan: +91 99539 18980',
   dmcNote: 'Contattare 1-2 giorni prima della partenza. Il DMC condividerà contatti del driver e guida per ogni città.',
-
   infoCards: [
     { title: '📄 Documenti', items: ['Passaporto: min. 6 mesi validità', 'e-Tourist Visa (ETA) — 25$', 'Richiedere 30-4 giorni prima', 'Digital Arrival Card entro 72h dalla partenza'] },
     { title: '💉 Vaccini', items: ['Epatite A/B (consigliato)', 'Tifo, Colera (consigliato)', 'Encefalite giapponese, Rabbia', 'Febbre gialla: solo se da paese endemico'] },
@@ -104,22 +100,20 @@ SUPABASE_KEY
     { title: '👗 Cosa Portare', items: ['Pantaloni lunghi + maglie maniche lunghe', 'Temple socks nello zaino', 'Sarong/velo per donne nei templi', 'Giacca per la sera (escursione termica 15-20°)', 'Scarpe comode'] },
     { title: '💰 Soldi', items: ['Valuta: Rupia Indiana (INR)', '1€ ≈ 95 INR', 'Money Pot: 200€ (totale stimato 400€)', 'Street food: ~100 rp (≈1,20€)', 'Cena con alcol: ~1.400-1.600 rp/pax', 'Mancia autista: ~2€/giorno/pax', 'Revolut consigliata'] },
     { title: '📱 App & SIM', items: ['Scarica UBER o OLA prima di partire', 'eSIM: Airalo o Holafly', 'SIM acquistabile aeroporto Delhi', 'App: Indian Visa Su-Swagatam'] },
-    { title: '🚗 Trasporti', items: ['Evitare rush hour (9-10 e 17:30-19)', 'Tuk-tuk: tariffa notturna +20%', 'Uber/Ola: un\'app per volta, pagamento cash', 'Volo domestico: 15kg + 7kg cabina'] },
+    { title: '🚗 Trasporti', items: ['Evitare rush hour (9-10 e 17:30-19)', 'Tuk-tuk: tariffa notturna +20%', "Uber/Ola: un'app per volta, pagamento cash", 'Volo domestico: 15kg + 7kg cabina'] },
     { title: '⚠️ Consigli', items: ['Flessibilità è la chiave', 'Nebbia a Delhi/Agra: chiedere orari strategici alla guida', 'Fila separata stranieri agli attrazioni', 'Contrattare è normale al mercato', 'Alcol: caro, non sempre disponibile'] },
   ],
-
   itinerary: [
     { day: 'Giorno 1', city: 'Delhi', overnight: 'Delhi', included: '—', guide: false, description: 'Arrivo, check-in, prima cena libera. Primo impatto con il caos indiano.', highlights: ['Hauz Khas Village (ristoranti & bar)', 'Connaught Place', 'Bar: Unplugged Courtyard, WOMB'], tip: 'Prenditi la serata con calma. Domani si parte presto.' },
     { day: 'Giorno 2', city: 'Delhi → Agra', overnight: 'Agra', included: 'Colazione', guide: true, description: 'Tour Old Delhi con guida (Jama Masjid, Chandni Chowk in rickshaw, India Gate). Transfer Delhi→Agra (4h).', highlights: ['Jama Masjid', 'Chandni Chowk in rickshaw', 'India Gate & Parliament (drive-pass)', 'Dinner: Sheroes Hangout o Street Food Sadar Bazar'], tip: 'Partenza ore 8:00. Pranzo street food a Chandni Chowk. Transfer verso Agra ore 15:00.' },
-    { day: 'Giorno 3', city: 'Agra → Jaipur', overnight: 'Jaipur', included: 'Colazione', guide: true, description: 'Taj Mahal all\'alba, Agra Fort. Transfer Agra→Jaipur (5h) con soste opzionali.', highlights: ['Taj Mahal all\'alba ⭐', 'Agra Fort', 'Fatehpur Sikri (opzionale)', 'Abhaneri Stepwell (opzionale)', 'Pranzo: samosa fuori Agra Fort'], tip: '⚠️ Al Taj: NO zaini grandi, cibo, liquidi, badge WeRoad. Lascia tutto nel bus. Min. 3h di visita. Partenza da Agra entro le 15:00.' },
+    { day: 'Giorno 3', city: 'Agra → Jaipur', overnight: 'Jaipur', included: 'Colazione', guide: true, description: "Taj Mahal all'alba, Agra Fort. Transfer Agra→Jaipur (5h) con soste opzionali.", highlights: ["Taj Mahal all'alba ⭐", 'Agra Fort', 'Fatehpur Sikri (opzionale)', 'Abhaneri Stepwell (opzionale)', 'Pranzo: samosa fuori Agra Fort'], tip: '⚠️ Al Taj: NO zaini grandi, cibo, liquidi, badge WeRoad. Lascia tutto nel bus. Min. 3h di visita. Partenza da Agra entro le 15:00.' },
     { day: 'Giorno 4', city: 'Jaipur', overnight: 'Jaipur', included: 'Colazione + Cena', guide: true, description: 'Amber Fort, City Palace, Jantar Mantar, Hawa Mahal. Pomeriggio mercati. Cena con famiglia locale (inclusa).', highlights: ['Amber Fort ⭐', 'City Palace, Jantar Mantar, Hawa Mahal', 'Mercati: Johri Bazar, Bapu Bazaar', 'Bollywood Dance Class (opzionale)', 'Raj Mandir Cinema Bollywood (serata)'], tip: 'Non prendere le jeep al parcheggio di Amber Fort — 15 min a piedi. Mercati chiudono alle 19:30.' },
     { day: 'Giorno 5', city: 'Jaipur → Pushkar', overnight: 'Pushkar', included: 'Colazione', guide: true, description: 'Partenza ore 8:00. Transfer (3h). Brahma Temple, Pushkar Lake, Savitri Temple al tramonto.', highlights: ['Brahma Temple ⭐', 'Pushkar Lake & Puja', 'Savitri Temple al tramonto ⭐', 'Mercato Main Market Road', 'Dinner: Real Out of the Blue (rooftop)'], tip: 'Per Savitri Temple: funivia solo 12 pax per ciclo. Se fila lunga → a piedi. Attenzione offerte Brahmin al lago: min. 2100 rp.' },
-    { day: 'Giorno 6', city: 'Pushkar → Jodhpur', overnight: 'Jodhpur', included: 'Colazione', guide: true, description: 'Mattina libera per shopping o yoga all\'alba. Partenza ore 14-15, transfer (5h).', highlights: ['Yoga session all\'alba (opzionale)', 'Street food a Pushkar', 'Dinner: Blue Bird Rooftop (musica dal vivo Rajasthan)'], tip: 'Serata rilassata al Blue Bird — musica live fino alle 22:30. Tour leader free.' },
+    { day: 'Giorno 6', city: 'Pushkar → Jodhpur', overnight: 'Jodhpur', included: 'Colazione', guide: true, description: "Mattina libera per shopping o yoga all'alba. Partenza ore 14-15, transfer (5h).", highlights: ["Yoga session all'alba (opzionale)", 'Street food a Pushkar', 'Dinner: Blue Bird Rooftop (musica dal vivo Rajasthan)'], tip: 'Serata rilassata al Blue Bird — musica live fino alle 22:30. Tour leader free.' },
     { day: 'Giorno 7', city: 'Jodhpur', overnight: 'Jodhpur', included: 'Colazione + Cena', guide: true, description: 'Mehrangarh Fort, Blue City a piedi. Pomeriggio cooking class con famiglia locale (inclusa).', highlights: ['Mehrangarh Fort ⭐', 'Flying Fox zipline (opzionale)', 'Blue City walk — quartiere Navchowkiya', 'Cooking class con famiglia locale ⭐'], tip: 'Fort apre alle 9:00. Flying Fox: 6 zipline sulle mura — prenotare tramite guida. Cooking class: dividere il gruppo a turni.' },
     { day: 'Giorno 8', city: 'Jodhpur → Delhi', overnight: 'Delhi', included: 'Colazione', guide: false, description: 'Mattina: mercati di Jodhpur. Volo domestico Jodhpur→Delhi (gestito DMC). Serata libera a Delhi.', highlights: ['Mercati Clock Square', 'Volo domestico ✈️ (15kg bagaglio incluso)', 'Dinner: Baris GK-3 (~1600 rp/pax)'], tip: 'Arriva in aeroporto 2h prima. Check-in online con codice PNR del DMC.' },
     { day: 'Giorno 9', city: 'Delhi', overnight: '—', included: 'Colazione', guide: false, description: 'Fine viaggio. Colazione e trasferimento autonomo in aeroporto.', highlights: ['Transfer aeroporto NON incluso — organizzare autonomamente'], tip: 'Volo di rientro non incluso nel pacchetto WeRoad.' },
   ],
-
   transports: [
     { type: '🚐 Van', route: 'Delhi → Agra', detail: 'Giorno 2 • 4h con soste • Partenza ore 15:00', prepaid: true },
     { type: '🚐 Van', route: 'Agra → Jaipur', detail: 'Giorno 3 • 5h con soste • Partenza entro ore 15:00', prepaid: true },
@@ -128,7 +122,6 @@ SUPABASE_KEY
     { type: '✈️ Volo', route: 'Jodhpur → Delhi', detail: 'Giorno 8 • 15kg bagaglio incluso • Check-in con PNR DMC', prepaid: true },
     { type: '🚖 Locale', route: 'Tuk-tuk / Uber / Ola', detail: 'Trasferimenti locali • Tariffa notturna +20%', prepaid: false },
   ],
-
   hotels: [
     { city: 'Delhi', name: 'TBD', info: 'Notti 1 & 8 • WiFi • Colazione inclusa' },
     { city: 'Agra', name: 'TBD', info: 'Notte 2 • Check-in 14:00 • WiFi • Colazione inclusa' },
@@ -136,7 +129,6 @@ SUPABASE_KEY
     { city: 'Pushkar', name: 'TBD', info: 'Notte 5 • Check-in 14:00 • WiFi • Colazione inclusa' },
     { city: 'Jodhpur', name: 'TBD', info: 'Notti 6 & 7 • Check-in 14:00 • WiFi • Colazione inclusa' },
   ],
-
   checklist: [
     'Passaporto (min. 6 mesi validità)',
     'e-Tourist Visa (ETA) — applicare 30-4 giorni prima',
@@ -157,38 +149,15 @@ SUPABASE_KEY
     'Giacca/maglione per la sera',
     'Antizanzare',
   ],
-
   polls: [
     { question: 'Cena finale a Jaipur?', options: ['Rooftop', 'Street Food Tour', 'Ristorante tipico'] },
     { question: 'Attività opzionale Agra→Jaipur?', options: ['Fatehpur Sikri', 'Abhaneri Stepwell', 'Entrambe'] },
     { question: 'Serata a Jodhpur?', options: ['Flying Fox zipline', 'Blue City walk', 'Raj Mandir Cinema'] },
   ],
-
   participants: [
     { name: 'Simone', city: 'Milano', note: 'Travel Coordinator 🎯' },
   ],
 };
-
-async function loadData() {
-const { data, error } = await supabase
-.from('trip_data')
-.select('content')
-.eq('id', 1)
-.single();
-
-if (error || !data?.content) {
-return JSON.parse(JSON.stringify(DEFAULT_DATA));
-}
-
-return data.content;
-}
-
-async function saveData(data) {
-await supabase
-.from('trip_data')
-.update({ content: data })
-.eq('id', 1);
-}
 
 // ============================================================
 // STATE
@@ -203,11 +172,46 @@ let votedPolls = JSON.parse(localStorage.getItem('weroad_votes') || '{}');
 const ADMIN_PASSWORD = 'weroad2026';
 
 // ============================================================
+// SUPABASE LOAD / SAVE
+// ============================================================
+async function loadData() {
+  try {
+    const { data: row, error } = await sb
+      .from('trip_data')
+      .select('content')
+      .eq('id', 1)
+      .single();
+
+    if (error || !row || !row.content || Object.keys(row.content).length === 0) {
+      // Tabella vuota: inserisce i dati di default
+      await sb.from('trip_data').upsert({ id: 1, content: DEFAULT_DATA });
+      return JSON.parse(JSON.stringify(DEFAULT_DATA));
+    }
+    return row.content;
+  } catch(e) {
+    console.error('Errore caricamento:', e);
+    return JSON.parse(JSON.stringify(DEFAULT_DATA));
+  }
+}
+
+async function saveData(d) {
+  try {
+    const { error } = await sb
+      .from('trip_data')
+      .update({ content: d })
+      .eq('id', 1);
+    if (error) throw error;
+  } catch(e) {
+    console.error('Errore salvataggio:', e);
+    showToast('Errore nel salvataggio ❌');
+  }
+}
+
+// ============================================================
 // RENDER
 // ============================================================
 function render() {
   document.getElementById('app').innerHTML = buildHTML();
-  attachEvents();
 }
 
 function buildHTML() {
@@ -222,7 +226,7 @@ function buildHTML() {
     ${buildChecklist()}
     ${buildPolls()}
     ${buildDMC()}
-    ${buildAdminTrigger()}
+    <button class="admin-trigger" onclick="toggleAdmin()">⚙️ Admin</button>
     ${adminOpen ? (adminAuthenticated ? buildAdminPanel() : buildAdminLogin()) : ''}
   `;
 }
@@ -253,7 +257,7 @@ function buildHero() {
           <h2 style="font-family:'Playfair Display',serif;font-size:68px;font-weight:900;line-height:1.05;">${data.tripName}</h2>
           <p style="margin-top:20px;font-size:18px;line-height:1.7;color:#ccc;">${data.subtitle}</p>
           <div style="margin-top:40px;display:grid;grid-template-columns:repeat(5,1fr);gap:24px;">
-            ${[['Destinazione','India 🇮🇳'],['Date',data.dates],['Partecipanti',data.participants],['Coordinator',data.coordinator],['DMC',data.dmc]].map(([l,v]) => `
+            ${[['Destinazione','India 🇮🇳'],['Date',data.dates],['Partecipanti',data.paxCount],['Coordinator',data.coordinator],['DMC',data.dmc]].map(([l,v]) => `
               <div>
                 <p style="font-size:11px;text-transform:uppercase;color:#999;letter-spacing:1px;">${l}</p>
                 <p style="margin-top:8px;font-size:17px;font-weight:700;">${v}</p>
@@ -285,7 +289,7 @@ function buildItinerary() {
       <h2 class="h2">Itinerario Giorno per Giorno</h2>
       <div style="border-left:2px solid #ddd;padding-left:32px;display:flex;flex-direction:column;gap:20px;">
         ${data.itinerary.map((item, i) => `
-          <div class="day-card" id="day-${i}">
+          <div class="day-card">
             <div class="day-dot"></div>
             <div class="day-header" onclick="toggleDay(${i})">
               <div style="flex:1;">
@@ -325,7 +329,7 @@ function buildTransports() {
     <section id="trasporti" class="section">
       <h2 class="h2">Spostamenti</h2>
       <div class="grid-3">
-        ${data.transports.map((t,i) => `
+        ${data.transports.map(t => `
           <div class="dark-card" style="padding:28px;">
             <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;">
               <p style="font-size:12px;text-transform:uppercase;letter-spacing:0.2em;color:#FFB0AA;">${t.type}</p>
@@ -343,7 +347,7 @@ function buildHotels() {
     <section id="hotel" class="section">
       <h2 class="h2">Hotel & Stay</h2>
       <div class="grid-3">
-        ${data.hotels.map((h,i) => `
+        ${data.hotels.map(h => `
           <div class="card" style="overflow:hidden;">
             <div style="height:140px;background:linear-gradient(135deg,#111,#FF5A4F);display:flex;align-items:center;justify-content:center;">
               <p style="color:white;font-weight:900;font-size:26px;font-family:'Playfair Display',serif;">${h.city}</p>
@@ -362,7 +366,7 @@ function buildParticipants() {
     <section id="partecipanti" class="section">
       <h2 class="h2">Il Team</h2>
       <div class="grid-3">
-        ${data.participants.map((p,i) => `
+        ${data.participants.map(p => `
           <div class="card" style="padding:28px;">
             <div style="display:flex;align-items:center;gap:16px;">
               <div style="height:60px;width:60px;border-radius:50%;background:#111;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;color:white;flex-shrink:0;">${p.name.charAt(0)}</div>
@@ -428,7 +432,7 @@ function buildDMC() {
         <div class="card" style="padding:36px;">
           <p style="font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#FF5A4F;margin-bottom:16px;">Il DMC gestisce:</p>
           ${['Alloggi','Transfer terrestri','Attività incluse nel pacchetto WR','Attività opzionali (prenotare tramite DMC)','Cambio valuta + SIM card','Emergenze e problemi in loco'].map((item,i,arr) => `
-            <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:${i<arr.length-1 ? '1px solid #f0f0f0' : 'none'};">
+            <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:${i<arr.length-1?'1px solid #f0f0f0':'none'};">
               <div style="width:8px;height:8px;border-radius:50%;background:#FF5A4F;flex-shrink:0;"></div>
               <span style="font-size:15px;">${item}</span>
             </div>`).join('')}
@@ -437,13 +441,9 @@ function buildDMC() {
     </section>`;
 }
 
-function buildAdminTrigger() {
-  return `<button class="admin-trigger" onclick="toggleAdmin()">⚙️ ${adminAuthenticated ? 'Admin' : 'Admin'}</button>`;
-}
-
 function buildAdminLogin() {
   return `
-    <div class="admin-overlay" onclick="closeAdminOverlay(event)">
+    <div class="admin-overlay" onclick="if(event.target===this)closeAdmin()">
       <div class="admin-modal">
         <h2 style="font-size:24px;font-weight:900;margin-bottom:8px;">Accesso Admin</h2>
         <p style="color:#888;font-size:14px;margin-bottom:28px;">Solo per il coordinatore WeRoad</p>
@@ -459,12 +459,11 @@ function buildAdminLogin() {
 
 function buildAdminPanel() {
   return `
-    <div class="admin-panel open" id="admin-panel">
+    <div class="admin-panel open">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
         <h2 style="font-size:18px;font-weight:900;">Pannello Admin</h2>
         <button class="admin-btn-ghost" onclick="closeAdmin()" style="padding:8px 14px;">✕ Chiudi</button>
       </div>
-
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px;">
         ${[['trip','🗺 Viaggio'],['itinerary','📅 Itinerario'],['hotels','🏨 Hotel'],['participants','👥 Team'],['checklist','✅ Checklist'],['polls','🗳 Sondaggi']].map(([t,l]) => `
           <button class="tab-btn ${adminTab===t?'active':''}" onclick="setTab('${t}')">${l}</button>`).join('')}
@@ -472,15 +471,15 @@ function buildAdminPanel() {
 
       ${adminTab === 'trip' ? `
         <h3>Info Generali</h3>
-        <input class="admin-input" id="f-tripName" value="${data.tripName}" placeholder="Nome viaggio" />
-        <input class="admin-input" id="f-subtitle" value="${data.subtitle}" placeholder="Subtitle" />
-        <input class="admin-input" id="f-dates" value="${data.dates}" placeholder="Date" />
-        <input class="admin-input" id="f-participants" value="${data.participants}" placeholder="N. partecipanti" />
-        <input class="admin-input" id="f-coordinator" value="${data.coordinator}" placeholder="Coordinator" />
+        <input class="admin-input" id="f-tripName" value="${esc(data.tripName)}" placeholder="Nome viaggio" />
+        <input class="admin-input" id="f-subtitle" value="${esc(data.subtitle)}" placeholder="Tappe" />
+        <input class="admin-input" id="f-dates" value="${esc(data.dates)}" placeholder="Date" />
+        <input class="admin-input" id="f-paxCount" value="${esc(data.paxCount)}" placeholder="N. partecipanti" />
+        <input class="admin-input" id="f-coordinator" value="${esc(data.coordinator)}" placeholder="Coordinator" />
         <h3>DMC</h3>
-        <input class="admin-input" id="f-dmc" value="${data.dmc}" placeholder="Nome DMC" />
-        <input class="admin-input" id="f-dmcContact" value="${data.dmcContact}" placeholder="Contatto DMC" />
-        <textarea class="admin-input admin-textarea" id="f-dmcNote" placeholder="Note DMC">${data.dmcNote}</textarea>
+        <input class="admin-input" id="f-dmc" value="${esc(data.dmc)}" placeholder="Nome DMC" />
+        <input class="admin-input" id="f-dmcContact" value="${esc(data.dmcContact)}" placeholder="Contatto DMC" />
+        <textarea class="admin-input admin-textarea" id="f-dmcNote" placeholder="Note DMC">${esc(data.dmcNote)}</textarea>
         <button class="admin-btn" onclick="saveTrip()" style="width:100%;margin-top:8px;">💾 Salva</button>
       ` : ''}
 
@@ -488,11 +487,11 @@ function buildAdminPanel() {
         ${data.itinerary.map((item,i) => `
           <div style="background:rgba(255,255,255,0.05);border-radius:12px;padding:14px;margin-bottom:12px;">
             <p style="font-size:13px;font-weight:700;color:#FF5A4F;margin-bottom:10px;">${item.day} — ${item.city}</p>
-            <input class="admin-input" id="it-city-${i}" value="${item.city}" placeholder="Città" />
-            <textarea class="admin-input admin-textarea" id="it-desc-${i}" placeholder="Descrizione">${item.description}</textarea>
-            <textarea class="admin-input admin-textarea" id="it-tip-${i}" placeholder="Tip coordinatore">${item.tip}</textarea>
-            <input class="admin-input" id="it-overnight-${i}" value="${item.overnight}" placeholder="Overnight" />
-            <input class="admin-input" id="it-included-${i}" value="${item.included}" placeholder="Pasti inclusi" />
+            <input class="admin-input" id="it-city-${i}" value="${esc(item.city)}" placeholder="Città" />
+            <textarea class="admin-input admin-textarea" id="it-desc-${i}" placeholder="Descrizione">${esc(item.description)}</textarea>
+            <textarea class="admin-input admin-textarea" id="it-tip-${i}" placeholder="Tip coordinatore">${esc(item.tip)}</textarea>
+            <input class="admin-input" id="it-overnight-${i}" value="${esc(item.overnight)}" placeholder="Overnight" />
+            <input class="admin-input" id="it-included-${i}" value="${esc(item.included)}" placeholder="Pasti inclusi" />
             <button class="admin-btn" onclick="saveItineraryDay(${i})" style="width:100%;">💾 Salva ${item.day}</button>
           </div>`).join('')}
       ` : ''}
@@ -501,8 +500,8 @@ function buildAdminPanel() {
         ${data.hotels.map((h,i) => `
           <div style="background:rgba(255,255,255,0.05);border-radius:12px;padding:14px;margin-bottom:10px;">
             <p style="font-size:13px;font-weight:700;color:#FF5A4F;margin-bottom:8px;">${h.city}</p>
-            <input class="admin-input" id="h-name-${i}" value="${h.name}" placeholder="Nome hotel" />
-            <input class="admin-input" id="h-info-${i}" value="${h.info}" placeholder="Info hotel" />
+            <input class="admin-input" id="h-name-${i}" value="${esc(h.name)}" placeholder="Nome hotel" />
+            <input class="admin-input" id="h-info-${i}" value="${esc(h.info)}" placeholder="Info hotel" />
             <button class="admin-btn" onclick="saveHotel(${i})" style="width:100%;">💾 Salva</button>
           </div>`).join('')}
       ` : ''}
@@ -537,11 +536,11 @@ function buildAdminPanel() {
         <h3>Sondaggi</h3>
         ${data.polls.map((poll,pi) => `
           <div style="background:rgba(255,255,255,0.05);border-radius:12px;padding:14px;margin-bottom:12px;">
-            <input class="admin-input" id="poll-q-${pi}" value="${poll.question}" placeholder="Domanda" />
+            <input class="admin-input" id="poll-q-${pi}" value="${esc(poll.question)}" placeholder="Domanda" />
             ${poll.options.map((opt,oi) => `
               <div style="display:flex;gap:6px;">
-                <input class="admin-input" id="poll-opt-${pi}-${oi}" value="${opt}" placeholder="Opzione ${oi+1}" style="flex:1;margin-bottom:4px;" />
-                <button class="admin-del" onclick="deletePollOption(${pi},${oi})" style="flex-shrink:0;padding:0 10px;">✕</button>
+                <input class="admin-input" id="poll-opt-${pi}-${oi}" value="${esc(opt)}" placeholder="Opzione ${oi+1}" style="flex:1;margin-bottom:4px;" />
+                <button class="admin-del" onclick="deletePollOption(${pi},${oi})" style="padding:0 10px;">✕</button>
               </div>`).join('')}
             <div style="display:flex;gap:8px;margin-top:6px;">
               <button class="admin-btn-ghost" onclick="addPollOption(${pi})" style="flex:1;font-size:12px;">+ Opzione</button>
@@ -565,20 +564,29 @@ function buildAdminPanel() {
 }
 
 // ============================================================
-// EVENTS & ACTIONS
+// HELPERS
 // ============================================================
-function attachEvents() {}
-
-function toggleAdmin() {
-  adminOpen = !adminOpen;
-  render();
+function esc(str) {
+  return String(str || '').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
+
+function showToast(msg, ok=true) {
+  const t = document.createElement('div');
+  t.textContent = (ok ? '✓ ' : '⚠ ') + msg;
+  t.style.cssText = `position:fixed;bottom:80px;right:24px;background:${ok?'#2d6a4f':'#c0392b'};color:white;padding:12px 20px;border-radius:12px;font-size:14px;font-weight:700;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,0.3);transition:opacity 0.3s;`;
+  document.body.appendChild(t);
+  setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 300); }, 2500);
+}
+
+// ============================================================
+// ACTIONS
+// ============================================================
+function toggleAdmin() { adminOpen = !adminOpen; render(); }
 function closeAdmin() { adminOpen = false; render(); }
-function closeAdminOverlay(e) { if(e.target === e.currentTarget) closeAdmin(); }
 
 function checkPwd() {
   const val = document.getElementById('admin-pwd').value;
-  if(val === ADMIN_PASSWORD) {
+  if (val === ADMIN_PASSWORD) {
     adminAuthenticated = true;
     localStorage.setItem('weroad_admin', 'yes');
     render();
@@ -595,7 +603,6 @@ function logoutAdmin() {
 }
 
 function setTab(t) { adminTab = t; render(); }
-
 function toggleDay(i) { openDay = openDay === i ? null : i; render(); }
 
 function toggleCheck(i) {
@@ -610,117 +617,131 @@ function vote(pi, oi) {
   render();
 }
 
-function saveTrip() {
+async function saveTrip() {
   data.tripName = document.getElementById('f-tripName').value;
   data.subtitle = document.getElementById('f-subtitle').value;
   data.dates = document.getElementById('f-dates').value;
-  data.participants = document.getElementById('f-participants').value;
+  data.paxCount = document.getElementById('f-paxCount').value;
   data.coordinator = document.getElementById('f-coordinator').value;
   data.dmc = document.getElementById('f-dmc').value;
   data.dmcContact = document.getElementById('f-dmcContact').value;
   data.dmcNote = document.getElementById('f-dmcNote').value;
-  saveData(data); render(); showToast('Salvato!');
+  await saveData(data);
+  render();
+  showToast('Salvato!');
 }
 
-function saveItineraryDay(i) {
+async function saveItineraryDay(i) {
   data.itinerary[i].city = document.getElementById(`it-city-${i}`).value;
   data.itinerary[i].description = document.getElementById(`it-desc-${i}`).value;
   data.itinerary[i].tip = document.getElementById(`it-tip-${i}`).value;
   data.itinerary[i].overnight = document.getElementById(`it-overnight-${i}`).value;
   data.itinerary[i].included = document.getElementById(`it-included-${i}`).value;
-  saveData(data); render(); showToast('Giorno salvato!');
+  await saveData(data);
+  render();
+  showToast('Giorno salvato!');
 }
 
-function saveHotel(i) {
+async function saveHotel(i) {
   data.hotels[i].name = document.getElementById(`h-name-${i}`).value;
   data.hotels[i].info = document.getElementById(`h-info-${i}`).value;
-  saveData(data); render(); showToast('Hotel salvato!');
+  await saveData(data);
+  render();
+  showToast('Hotel salvato!');
 }
 
-function addParticipant() {
+async function addParticipant() {
   const name = document.getElementById('new-p-name').value.trim();
   const city = document.getElementById('new-p-city').value.trim();
   const note = document.getElementById('new-p-note').value.trim();
-  if(!name) return;
+  if (!name) return;
   data.participants.push({ name, city, note });
-  saveData(data); render(); showToast('Partecipante aggiunto!');
+  await saveData(data);
+  render();
+  showToast('Partecipante aggiunto!');
 }
 
-function deleteParticipant(i) {
-  data.participants.splice(i,1);
-  saveData(data); render();
+async function deleteParticipant(i) {
+  data.participants.splice(i, 1);
+  await saveData(data);
+  render();
 }
 
-function addChecklistItem() {
+async function addChecklistItem() {
   const val = document.getElementById('new-check').value.trim();
-  if(!val) return;
+  if (!val) return;
   data.checklist.push(val);
-  saveData(data); render(); showToast('Voce aggiunta!');
+  await saveData(data);
+  render();
+  showToast('Voce aggiunta!');
 }
 
-function deleteChecklistItem(i) {
-  data.checklist.splice(i,1);
+async function deleteChecklistItem(i) {
+  data.checklist.splice(i, 1);
   const newChecked = {};
-  Object.keys(checkedItems).forEach(k => { if(parseInt(k) !== i) newChecked[parseInt(k) > i ? parseInt(k)-1 : k] = checkedItems[k]; });
+  Object.keys(checkedItems).forEach(k => {
+    if (parseInt(k) !== i) newChecked[parseInt(k) > i ? parseInt(k) - 1 : k] = checkedItems[k];
+  });
   checkedItems = newChecked;
   localStorage.setItem('weroad_checked', JSON.stringify(checkedItems));
-  saveData(data); render();
+  await saveData(data);
+  render();
 }
 
-function savePoll(pi) {
+async function savePoll(pi) {
   data.polls[pi].question = document.getElementById(`poll-q-${pi}`).value;
-  data.polls[pi].options = data.polls[pi].options.map((_,oi) => document.getElementById(`poll-opt-${pi}-${oi}`).value).filter(Boolean);
-  saveData(data); render(); showToast('Sondaggio salvato!');
+  data.polls[pi].options = data.polls[pi].options.map((_, oi) => document.getElementById(`poll-opt-${pi}-${oi}`).value).filter(Boolean);
+  await saveData(data);
+  render();
+  showToast('Sondaggio salvato!');
 }
 
-function addPollOption(pi) {
-  savePoll(pi);
+async function addPollOption(pi) {
+  await savePoll(pi);
   data.polls[pi].options.push('Nuova opzione');
-  saveData(data); render();
+  await saveData(data);
+  render();
 }
 
-function deletePollOption(pi, oi) {
-  data.polls[pi].options.splice(oi,1);
-  saveData(data); render();
+async function deletePollOption(pi, oi) {
+  data.polls[pi].options.splice(oi, 1);
+  await saveData(data);
+  render();
 }
 
-function deletePoll(pi) {
-  data.polls.splice(pi,1);
-  saveData(data); render();
+async function deletePoll(pi) {
+  data.polls.splice(pi, 1);
+  await saveData(data);
+  render();
 }
 
-function addPoll() {
+async function addPoll() {
   const q = document.getElementById('new-poll-q').value.trim();
   const o1 = document.getElementById('new-poll-o1').value.trim();
   const o2 = document.getElementById('new-poll-o2').value.trim();
   const o3 = document.getElementById('new-poll-o3').value.trim();
-  if(!q || !o1 || !o2) return;
-  const opts = [o1, o2]; if(o3) opts.push(o3);
+  if (!q || !o1 || !o2) return;
+  const opts = [o1, o2];
+  if (o3) opts.push(o3);
   data.polls.push({ question: q, options: opts });
-  saveData(data); render(); showToast('Sondaggio creato!');
+  await saveData(data);
+  render();
+  showToast('Sondaggio creato!');
 }
 
-function resetData() {
-  if(!confirm('Sei sicuro? Tutti i dati modificati verranno persi.')) return;
-  localStorage.removeItem('weroad_data');
+async function resetData() {
+  if (!confirm('Sei sicuro? Tutti i dati modificati verranno persi.')) return;
   data = JSON.parse(JSON.stringify(DEFAULT_DATA));
-  saveData(data); render();
-}
-
-function showToast(msg) {
-  const t = document.createElement('div');
-  t.textContent = '✓ ' + msg;
-  t.style.cssText = 'position:fixed;bottom:80px;right:24px;background:#2d6a4f;color:white;padding:12px 20px;border-radius:12px;font-size:14px;font-weight:700;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,0.3);transition:opacity 0.3s;';
-  document.body.appendChild(t);
-  setTimeout(() => { t.style.opacity='0'; setTimeout(() => t.remove(), 300); }, 2000);
+  await saveData(data);
+  render();
 }
 
 // ============================================================
 // INIT
 // ============================================================
 async function init() {
-data = await loadData();
-render();
+  data = await loadData();
+  render();
 }
 
 init();
